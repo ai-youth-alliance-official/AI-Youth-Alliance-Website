@@ -1,0 +1,36 @@
+# Enable URL rewriting
+RewriteEngine On
+
+# Remove .php extension for all pages
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-zA-Z0-9_-]+)$ $1.php [L]
+
+# Prevent directory listing
+Options -Indexes
+
+# Block access to .htaccess and .env files
+<FilesMatch "^(\.htaccess|\.env)">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Security Headers for XSS, Clickjacking, and MIME sniffing protection
+Header set X-XSS-Protection "1; mode=block"
+Header set X-Frame-Options "SAMEORIGIN"
+Header set X-Content-Type-Options "nosniff"
+
+# Force HTTPS and include subdomains
+Header set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+# Restrict access to sensitive directories (e.g., cgi-bin)
+<Directory "/cgi-bin/">
+    Order Allow,Deny
+    Deny from all
+</Directory>
+
+# Set file permissions for sensitive files
+<FilesMatch "\.(htaccess|env)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>

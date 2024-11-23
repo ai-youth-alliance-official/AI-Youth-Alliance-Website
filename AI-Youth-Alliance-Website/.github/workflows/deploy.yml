@@ -1,0 +1,51 @@
+name: Deploy to Hosting
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout code from the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Set up PHP environment
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+
+      # Step 3: Install PHP dependencies
+      - name: Install dependencies
+        run: composer install
+
+      # Step 4: Create Backup using rsync (exclude .git/, vendor/, node_modules/, and backup file)
+      - name: Create Backup (backup.tar.gz)
+        run: |
+          # Create a backup using rsync to avoid "file changed as we read it" error
+          rsync -av --exclude='.git' --exclude='vendor' --exclude='node_modules' --exclude='backup.tar.gz' ./ /tmp/backup/
+          tar -czvf backup.tar.gz -C /tmp backup
+
+      # Step 5: Clean remote FTP directory
+      - name: Clean up remote FTP directory
+        uses: SamKirkland/FTP-Deploy-Action@4.0.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          dangerous-clean-slate: true
+
+      # Step 6: Deploy to FTP server
+      - name: Deploy to FTP server
+        uses: SamKirkland/FTP-Deploy-Action@4.0.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./  # Upload all files from the current directory
+          exclude: backup.tar.gz  # Exclude the backup file from upload
