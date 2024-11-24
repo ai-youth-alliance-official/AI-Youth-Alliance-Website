@@ -1,12 +1,4 @@
-## AI Youth Alliance Website
-
-The AI Youth Alliance website is a dynamic platform designed to connect young AI enthusiasts, foster collaboration, and share resources and opportunities in the field of Artificial Intelligence. The site offers various features including event management, blog posts, and member registration, all aimed at encouraging engagement and growth within the AI community.
-
-Through this platform, AI Youth Alliance strives to create a space for like-minded individuals to learn, collaborate, and contribute to AI initiatives, while also staying informed about the latest trends, opportunities, and projects in the AI industry.
-
-We are updating. But you can visit the website at:
-
-## About the Website
+## About AI Youth Alliance the Website
 
 The AI Youth Alliance website is a dynamic platform designed to connect young AI enthusiasts, foster collaboration, and share resources and opportunities in the field of Artificial Intelligence. The site offers various features including event management, blog posts, and member registration, all aimed at encouraging engagement and growth within the AI community.
 
