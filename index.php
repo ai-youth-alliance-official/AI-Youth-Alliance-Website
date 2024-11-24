@@ -91,8 +91,7 @@ $currentPage = basename($_SERVER["PHP_SELF"]);
                     <li><a href="<?php echo $baseUrl; ?>pages/about-us.php" class="<?php echo $currentPage == "about-us.php" ? "active" : ""; ?>">About Us</a></li>
                     <li><a href="<?php echo $baseUrl; ?>pages/join.php" class="<?php echo $currentPage == "join.php" ? "active" : ""; ?>">Join</a></li>
                     <li><a href="<?php echo $baseUrl; ?>pages/contact-us.php" class="<?php echo $currentPage == "contact-us.php" ? "active" : ""; ?>">Contact Us</a></li>
-                    <li><a href="<?php echo $baseUrl; ?>pages/events.php" class="<?php echo $currentPage == "events.php" ? "active" : ""; ?>">Upcoming Events</a></li>
-                    <li><a href="<?php echo $baseUrl; ?>pages/past-events.php" class="<?php echo $currentPage == "past-events.php" ? "active" : ""; ?>">Past Events</a></li>
+                    <li><a href="<?php echo $baseUrl; ?>pages/events.php" class="<?php echo $currentPage == "events.php" ? "active" : ""; ?>">Events</a></li>
                     <li><a href="<?php echo $baseUrl; ?>pages/research.php" class="<?php echo $currentPage == "research.php" ? "active" : ""; ?>">Research</a></li>
                     <li><a href="<?php echo $baseUrl; ?>pages/blogs.php" class="<?php echo $currentPage == "blogs.php" ? "active" : ""; ?>">Blogs</a></li>
                     <li><a href="<?php echo $baseUrl; ?>pages/projects.php" class="<?php echo $currentPage == "projects.php" ? "active" : ""; ?>">Projects</a></li>
