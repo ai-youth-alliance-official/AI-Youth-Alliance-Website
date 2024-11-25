@@ -3,30 +3,29 @@ name: Deploy PHP Project with Backup
 on:
   push:
     branches:
-      - deploy  # Trigger deployment when changes are pushed to the 'deploy' branch
+      - deploy  # Trigger the workflow only when there's a push to the 'deploy' branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository (custom script for the checkout)
+      # Step 1: Checkout the repository
       - name: Checkout repository
-        run: |
-          git clone https://github.com/${{ github.repository }} .
-      
-      # Step 2: Set up PHP manually
-      - name: Set up PHP 8.1
-        run: |
-          sudo apt update
-          sudo apt install php8.1 php8.1-cli php8.1-fpm php8.1-mysql php8.1-xml php8.1-mbstring php8.1-curl php8.1-zip -y
+        uses: actions/checkout@v3
+
+      # Step 2: Set up PHP environment
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
 
       # Step 3: Install PHP dependencies
       - name: Install dependencies
         run: |
           composer install --no-dev --optimize-autoloader
 
-      # Step 4: Backup current repository files (to repository, not server)
+      # Step 4: Backup current repository files
       - name: Create Backup in Repository
         run: |
           BACKUP_DIR=$(mktemp -d)  # Create a temporary directory
@@ -52,13 +51,20 @@ jobs:
           git commit -m "Backup before deployment"
           git push
 
-      # Step 6: Deploy to FTP Server (overwrite if necessary)
-      - name: Deploy to FTP server using custom script
-        run: |
-          ftp -n ${{ secrets.FTP_SERVER }} <<END_SCRIPT
-          user ${{ secrets.FTP_USERNAME }} ${{ secrets.FTP_PASSWORD }}
-          binary
-          cd /path/to/your/server/directory
-          mput *
-          quit
-          END_SCRIPT
+      # Step 6: Deploy to FTP Server
+      - name: Deploy to FTP server
+        uses: SamKirkland/FTP-Deploy-Action@4.0.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}         # FTP server address
+          username: ${{ secrets.FTP_USERNAME }}     # FTP username
+          password: ${{ secrets.FTP_PASSWORD }}     # FTP password
+          local-dir: ./                             # Directory to upload
+          exclude: |                                # Exclude unnecessary files and folders
+            node_modules/
+            vendor/
+            tests/
+            *.backup
+            *.log
+            composer.json
+            composer.lock
+          delete: false                             # Preserve existing files on the server
