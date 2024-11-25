@@ -1,4 +1,4 @@
-name: Website for hosting
+name: Website Update Deployment
 
 on:
   push:
