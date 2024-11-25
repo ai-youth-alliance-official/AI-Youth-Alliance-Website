@@ -24,12 +24,23 @@ jobs:
       - name: Install dependencies
         run: composer install
 
-      # Step 4: Create a Temporary Directory for Backup
+      # Step 4: Create Backup
       - name: Create Backup in Repository
         run: |
+          # Create a temporary directory for safe backup
+          BACKUP_DIR=$(mktemp -d)
+          
+          # Use rsync to copy all files except excluded ones
+          rsync -av --exclude='.git' --exclude='vendor/' --exclude='node_modules/' --exclude='backup/' ./ "$BACKUP_DIR/"
+
+          # Create the backup folder if not exists
           mkdir -p backup
-          rsync -av --exclude='.git' --exclude='vendor/' --exclude='node_modules/' --exclude='backup/' ./ backup/
-          tar -czvf backup/backup.tar.gz -C backup . # Compress the backup folder
+          
+          # Archive the backup and place it in the backup folder
+          tar -czvf backup/backup.tar.gz -C "$BACKUP_DIR" .
+
+          # Clean up temporary directory
+          rm -rf "$BACKUP_DIR"
 
       # Step 5: Commit Backup to Repository
       - name: Commit Backup
