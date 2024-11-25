@@ -10,15 +10,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
+      # Step 1: Checkout the repository (custom script for the checkout)
       - name: Checkout repository
-        uses: actions/checkout@v3
-
-      # Step 2: Set up PHP environment
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.1'  # Specify the PHP version
+        run: |
+          git clone https://github.com/${{ github.repository }} .
+      
+      # Step 2: Set up PHP manually
+      - name: Set up PHP 8.1
+        run: |
+          sudo apt update
+          sudo apt install php8.1 php8.1-cli php8.1-fpm php8.1-mysql php8.1-xml php8.1-mbstring php8.1-curl php8.1-zip -y
 
       # Step 3: Install PHP dependencies
       - name: Install dependencies
@@ -52,21 +53,12 @@ jobs:
           git push
 
       # Step 6: Deploy to FTP Server (overwrite if necessary)
-      - name: Deploy to FTP server
-        uses: SamKirkland/FTP-Deploy-Action@4.0.0
-        with:
-          server: ${{ secrets.FTP_SERVER }}         # FTP server address
-          username: ${{ secrets.FTP_USERNAME }}     # FTP username
-          password: ${{ secrets.FTP_PASSWORD }}     # FTP password
-          local-dir: ./                             # Directory to upload (root of the repo)
-          exclude: |                                # Exclude unnecessary files and folders
-            backup/                                 # Exclude the backup folder
-            .git/                                   # Exclude the Git folder
-            node_modules/                           # Exclude the node_modules folder
-            vendor/                                 # Exclude the vendor folder
-            tests/                                  # Exclude test files
-            *.log                                   # Exclude log files
-            composer.json                           # Exclude composer.json
-            composer.lock                          # Exclude composer.lock
-          delete: false                             # Preserve existing files on the server
-
+      - name: Deploy to FTP server using custom script
+        run: |
+          ftp -n ${{ secrets.FTP_SERVER }} <<END_SCRIPT
+          user ${{ secrets.FTP_USERNAME }} ${{ secrets.FTP_PASSWORD }}
+          binary
+          cd /path/to/your/server/directory
+          mput *
+          quit
+          END_SCRIPT
