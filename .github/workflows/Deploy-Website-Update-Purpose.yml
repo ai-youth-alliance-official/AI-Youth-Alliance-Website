@@ -24,23 +24,23 @@ jobs:
       - name: Install dependencies
         run: composer install
 
-      # Step 4: Create Backup using rsync (exclude .git/, vendor/, node_modules/, and backup file)
-      - name: Create Backup (backup.tar.gz)
+      # Step 4: Create Backup in the Repository
+      - name: Create Backup
         run: |
-          # Create a backup using rsync to avoid "file changed as we read it" error
-          rsync -av --exclude='.git' --exclude='vendor' --exclude='node_modules' --exclude='backup.tar.gz' ./ /tmp/backup/
-          tar -czvf backup.tar.gz -C /tmp backup
+          mkdir -p backup
+          rsync -av --exclude='.git' --exclude='vendor' --exclude='node_modules' --exclude='backup/' ./ backup/
+          tar -czvf backup/backup.tar.gz -C backup .
 
-      # Step 5: Clean remote FTP directory
-      - name: Clean up remote FTP directory
-        uses: SamKirkland/FTP-Deploy-Action@4.0.0
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          dangerous-clean-slate: true
+      # Step 5: Commit Backup to Repository
+      - name: Commit Backup
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add backup/
+          git commit -m "Backup before deployment"
+          git push
 
-      # Step 6: Deploy to FTP server
+      # Step 6: Deploy to FTP server (preserve existing files)
       - name: Deploy to FTP server
         uses: SamKirkland/FTP-Deploy-Action@4.0.0
         with:
@@ -48,4 +48,9 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./  # Upload all files from the current directory
-          exclude: backup.tar.gz  # Exclude the backup file from upload
+          exclude: |
+            backup/
+            .git/
+            vendor/
+            node_modules/
+          delete: false  # Ensure existing server files not in the repo remain intact
