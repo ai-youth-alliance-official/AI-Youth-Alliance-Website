@@ -21,6 +21,7 @@ $currentPage = basename($_SERVER["PHP_SELF"]);
     <meta name="description" content="AI Youth Alliance - Empowering the next generation of AI innovators and leaders. Join us to shape the future of AI.">
     <meta name="keywords" content="AI, Artificial Intelligence, Youth Alliance, Innovation, Technology, Research, AI Leadership">
     <meta name="author" content="AI Youth Alliance">
+    <meta name="robots" content="index, follow"> 
     <title>AI Youth Alliance</title>
     <link rel="stylesheet" href="<?php echo $baseUrl; ?>assets/css/styles.css">
 
