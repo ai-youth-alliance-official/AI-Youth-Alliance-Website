@@ -1,9 +1,9 @@
-name: Deploy PHP Project with Backup
+name: Website for hosting
 
 on:
   push:
     branches:
-      - deploy  # Trigger deployment when changes are pushed to the 'deploy' branch
+      - deploy  # Trigger the workflow only when there's a push to the 'deploy' branch
 
 jobs:
   deploy:
@@ -18,14 +18,14 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'  # Specify the PHP version
+          php-version: '8.1'
 
       # Step 3: Install PHP dependencies
       - name: Install dependencies
         run: |
           composer install --no-dev --optimize-autoloader
 
-      # Step 4: Backup current repository files (to repository, not server)
+      # Step 4: Backup current repository files
       - name: Create Backup in Repository
         run: |
           BACKUP_DIR=$(mktemp -d)  # Create a temporary directory
@@ -51,22 +51,20 @@ jobs:
           git commit -m "Backup before deployment"
           git push
 
-      # Step 6: Deploy to FTP Server (overwrite if necessary)
+      # Step 6: Deploy to FTP Server
       - name: Deploy to FTP server
         uses: SamKirkland/FTP-Deploy-Action@4.0.0
         with:
           server: ${{ secrets.FTP_SERVER }}         # FTP server address
           username: ${{ secrets.FTP_USERNAME }}     # FTP username
           password: ${{ secrets.FTP_PASSWORD }}     # FTP password
-          local-dir: ./                             # Directory to upload (root of the repo)
+          local-dir: ./                             # Directory to upload
           exclude: |                                # Exclude unnecessary files and folders
-            backup/                                 # Exclude the backup folder
-            .git/                                   # Exclude the Git folder
-            node_modules/                           # Exclude the node_modules folder
-            vendor/                                 # Exclude the vendor folder
-            tests/                                  # Exclude test files
-            *.log                                   # Exclude log files
-            composer.json                           # Exclude composer.json
-            composer.lock                          # Exclude composer.lock
+            node_modules/
+            vendor/
+            tests/
+            *.backup
+            *.log
+            composer.json
+            composer.lock
           delete: false                             # Preserve existing files on the server
-
