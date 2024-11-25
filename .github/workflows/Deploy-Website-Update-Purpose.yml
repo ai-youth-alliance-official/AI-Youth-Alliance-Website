@@ -24,12 +24,12 @@ jobs:
       - name: Install dependencies
         run: composer install
 
-      # Step 4: Create Backup in the Repository
-      - name: Create Backup
+      # Step 4: Create a Temporary Directory for Backup
+      - name: Create Backup in Repository
         run: |
           mkdir -p backup
-          rsync -av --exclude='.git' --exclude='vendor' --exclude='node_modules' --exclude='backup/' ./ backup/
-          tar -czvf backup/backup.tar.gz -C backup .
+          rsync -av --exclude='.git' --exclude='vendor/' --exclude='node_modules/' --exclude='backup/' ./ backup/
+          tar -czvf backup/backup.tar.gz -C backup . # Compress the backup folder
 
       # Step 5: Commit Backup to Repository
       - name: Commit Backup
@@ -40,7 +40,7 @@ jobs:
           git commit -m "Backup before deployment"
           git push
 
-      # Step 6: Deploy to FTP server (preserve existing files)
+      # Step 6: Deploy to FTP Server (Preserve Existing Files)
       - name: Deploy to FTP server
         uses: SamKirkland/FTP-Deploy-Action@4.0.0
         with:
