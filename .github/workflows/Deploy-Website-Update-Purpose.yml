@@ -1,16 +1,16 @@
-name: Deploy to Hosting
+name: Deploy PHP Project with Backup
 
 on:
   push:
     branches:
-      - main
+      - deploy  # Trigger deployment when changes are pushed to the 'deploy' branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout code from the repository
+      # Step 1: Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -18,31 +18,31 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: '8.1'  # Specify the PHP version
 
       # Step 3: Install PHP dependencies
       - name: Install dependencies
-        run: composer install
+        run: |
+          composer install --no-dev --optimize-autoloader
 
-      # Step 4: Create Backup
+      # Step 4: Backup current repository files (to repository, not server)
       - name: Create Backup in Repository
         run: |
-          # Create a temporary directory for safe backup
-          BACKUP_DIR=$(mktemp -d)
+          BACKUP_DIR=$(mktemp -d)  # Create a temporary directory
           
           # Use rsync to copy all files except excluded ones
           rsync -av --exclude='.git' --exclude='vendor/' --exclude='node_modules/' --exclude='backup/' ./ "$BACKUP_DIR/"
 
-          # Create the backup folder if not exists
+          # Create the backup directory if it doesn't exist
           mkdir -p backup
           
-          # Archive the backup and place it in the backup folder
+          # Archive the backup into the `backup` folder
           tar -czvf backup/backup.tar.gz -C "$BACKUP_DIR" .
 
           # Clean up temporary directory
           rm -rf "$BACKUP_DIR"
 
-      # Step 5: Commit Backup to Repository
+      # Step 5: Commit the backup to the repository
       - name: Commit Backup
         run: |
           git config user.name "github-actions[bot]"
@@ -51,17 +51,22 @@ jobs:
           git commit -m "Backup before deployment"
           git push
 
-      # Step 6: Deploy to FTP Server (Preserve Existing Files)
+      # Step 6: Deploy to FTP Server (overwrite if necessary)
       - name: Deploy to FTP server
         uses: SamKirkland/FTP-Deploy-Action@4.0.0
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./  # Upload all files from the current directory
-          exclude: |
-            backup/
-            .git/
-            vendor/
-            node_modules/
-          delete: false  # Ensure existing server files not in the repo remain intact
+          server: ${{ secrets.FTP_SERVER }}         # FTP server address
+          username: ${{ secrets.FTP_USERNAME }}     # FTP username
+          password: ${{ secrets.FTP_PASSWORD }}     # FTP password
+          local-dir: ./                             # Directory to upload (root of the repo)
+          exclude: |                                # Exclude unnecessary files and folders
+            backup/                                 # Exclude the backup folder
+            .git/                                   # Exclude the Git folder
+            node_modules/                           # Exclude the node_modules folder
+            vendor/                                 # Exclude the vendor folder
+            tests/                                  # Exclude test files
+            *.log                                   # Exclude log files
+            composer.json                           # Exclude composer.json
+            composer.lock                          # Exclude composer.lock
+          delete: false                             # Preserve existing files on the server
+
