@@ -3,7 +3,7 @@ name: Website Update Deployment
 on:
   push:
     branches:
-      - deploy  # Trigger the workflow only when there's a push to the 'deploy' branch
+      - main  # Trigger the workflow only when there's a push to the 'main' branch
 
 jobs:
   deploy:
