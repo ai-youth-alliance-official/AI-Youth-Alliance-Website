@@ -1,0 +1,33 @@
+# Enable Rewrite Engine
+RewriteEngine On
+
+# 1. Redirect HTTP to HTTPS (if SSL is enabled)
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# 2. Prevent Directory Listing (Indexes)
+Options -Indexes
+
+# 3. Redirect www to non-www (use this if you want non-www version)
+RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
+
+# 4. Block Specific IP Addresses (Example)
+# Add your IP in the "Require not ip" line to block it
+<RequireAll>
+  Require all granted
+  Require not ip 198.45.114.194
+</RequireAll>
+
+# 5. Disable Access to .htaccess File (Security Measure)
+<Files .htaccess>
+  Order Allow,Deny
+  Deny from all
+</Files>
+
+# 6. Enable Gzip Compression for Faster Loading
+AddOutputFilterByType DEFLATE text/plain text/html text/xml text/css application/x-javascript text/javascript
+
+# 7. Block Malicious User Agents (Bots, Crawlers, Scrapers)
+RewriteCond %{HTTP_USER_AGENT} (bot|crawl|spider) [NC]
+RewriteRule .* - [F,L]
