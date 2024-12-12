@@ -1,4 +1,4 @@
-name: Website Update Deployment
+name: Website Update
 
 on:
   push:
