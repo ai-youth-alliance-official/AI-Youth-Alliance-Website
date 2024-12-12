@@ -1,0 +1,45 @@
+name: Website Update
+
+on:
+  push:
+    branches:
+      - deploy  # Trigger the workflow only when there's a push to the 'deploy' branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+
+      # Step 2: Set up PHP environment
+      - name: Setup PHP Action
+        uses: shivammathur/setup-php@2.31.1
+        with:
+          php-version: '8.1'
+
+      # Step 3: Install PHP dependencies
+      - name: Install dependencies
+        run: |
+          composer install --no-dev --optimize-autoloader
+
+      # Step 4: Deploy to FTP Server
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./  # Adjust this if your deployment directory is different
+          exclude: |
+            node_modules/
+            vendor/
+            tests/
+            *.backup
+            *.log
+            composer.json
+            composer.lock
+          delete: false  # Prevent deleting existing files on the server
+          
