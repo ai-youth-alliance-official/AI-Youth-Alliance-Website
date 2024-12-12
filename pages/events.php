@@ -164,7 +164,7 @@
                 echo '<div class="no-events-message">Stay tuned for upcoming events! We will be sharing updates shortly. Check back soon for more information.</div>';
             }
         } else {
-            echo '<p>Just Wait. Something Special is cooking.</p>';
+            echo '<div class="no-events-message">Stay tuned for upcoming events! We will be sharing updates shortly. Check back soon for more information.</div>';
         }
     }
     ?>
