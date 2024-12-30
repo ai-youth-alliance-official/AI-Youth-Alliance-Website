@@ -129,31 +129,103 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Template 2: Left-Aligned Content */
+/* General Template Styling */
 .left-aligned-template {
     text-align: justify;
     margin: 20px 15px;
     line-height: 1.8;
-}
-
-.left-aligned-template p {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    margin-bottom: 15px;
-    padding: 10px;
-    color: #333333;
+    padding: 15px;
     border-left: 8px solid #25ccc1;
     background: rgba(37, 204, 193, 0.1);
-    border-radius: px;
+    border-radius: 5px;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Hover Effects for Left-Aligned Content */
-.left-aligned-template p:hover {
+/* Consistent Styling for Multiple Paragraphs */
+.left-aligned-template p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 15px; /* Space between multiple paragraphs */
+    color: #333333;
+}
+
+/* Styling for All Inline Tags */
+.left-aligned-template p * {
+    font-weight: normal;
+    font-size: inherit;
+    color: inherit;
+    line-height: inherit;
+    margin: 0;
+    padding: 0;
+}
+
+/* Special Styling for Inline Elements */
+.left-aligned-template p b,
+.left-aligned-template p strong {
+    font-weight: bold;
+    color: #000;
+}
+
+.left-aligned-template p i,
+.left-aligned-template p em {
+    font-style: italic;
+    color: #555;
+}
+
+.left-aligned-template p a {
+    color: #0056b3;
+    text-decoration: underline;
+    transition: color 0.3s ease;
+}
+
+.left-aligned-template p a:hover {
+    color: #d400ff;
+}
+
+/* List Styling Within the Template */
+.left-aligned-template ul,
+.left-aligned-template ol {
+    margin: 15px 0;
+    padding-left: 20px; /* Indentation for lists */
+    list-style-position: outside;
+    color: #333333;
+}
+
+/* List Items */
+.left-aligned-template li {
+    margin-bottom: 5px;
+    padding-left: 5px;
+    line-height: 1.8;
+}
+
+/* Nested Lists */
+.left-aligned-template ul ul,
+.left-aligned-template ol ol {
+    margin-top: 10px;
+    margin-left: 20px;
+    padding-left: 15px;
+    background: rgba(37, 204, 193, 0.05); /* Slightly lighter background */
+    border-left: 4px solid #25ccc1;
+}
+
+/* Hover Effects */
+.left-aligned-template:hover {
     background: rgba(37, 204, 193, 0.2);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
 }
+
+/* Styling for <br> Tags */
+.left-aligned-template br {
+    display: block;
+    margin: 10px 0;
+}
+
+/* General Hover Effects for Links */
+.left-aligned-template a:hover {
+    color: #d400ff;
+}
+
 
 /* Full Blog Content Links */
 .blog-full-content a {
