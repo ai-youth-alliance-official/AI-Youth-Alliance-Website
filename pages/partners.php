@@ -21,7 +21,7 @@ include('../includes/header.php');
 
 <main class="partners-content">
     <?php
-    $partners_folder = 'data/partners/';  // Folder where partners HTML files will be stored
+    $partners_folder = '../data/partners/';  // Folder where partners HTML files will be stored
 
     // Check if the directory exists
     if (is_dir($partners_folder)) {
